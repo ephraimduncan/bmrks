@@ -10,6 +10,9 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
 } from "@/components/ui/context-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import {
   Copy,
   Pencil,
@@ -126,13 +129,13 @@ export function BookmarkList({
             }
           >
             <ContextMenuTrigger asChild>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => handleClick(bookmark)}
                 onMouseEnter={() => onHoverChange(index)}
                 onMouseLeave={() => onHoverChange(-1)}
                 className={cn(
-                  "group flex items-center justify-between rounded-xl px-4 py-3 text-left",
+                  "group flex h-auto items-center justify-between rounded-xl px-4 py-3 text-left",
                   selectedIndex === index || contextMenuOpenId === bookmark.id
                     ? "bg-muted"
                     : "hover:bg-muted/50",
@@ -147,7 +150,7 @@ export function BookmarkList({
                     isCopied={copiedId === bookmark.id}
                   />
                   {renamingId === bookmark.id ? (
-                    <input
+                    <Input
                       type="text"
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
@@ -160,7 +163,7 @@ export function BookmarkList({
                         }
                       }}
                       autoFocus
-                      className="flex-1 max-w-[60%] bg-transparent text-sm font-normal outline-none border-none selection:bg-primary/20 caret-foreground"
+                      className="h-auto flex-1 max-w-[60%] border-none bg-transparent px-0 py-0 text-sm font-normal shadow-none selection:bg-primary/20 focus-visible:ring-0"
                       onClick={(e) => e.stopPropagation()}
                       onFocus={(e) => {
                         const val = e.target.value;
@@ -192,45 +195,41 @@ export function BookmarkList({
                   {(selectedIndex === index || hoveredIndex === index) &&
                     bookmark.url &&
                     !renamingId && (
-                      <div className="flex items-center justify-end gap-1">
-                        <kbd className="rounded border border-border bg-background px-1.5 text-sm font-medium text-muted-foreground">
-                          ⌘
-                        </kbd>
-                        <kbd className="rounded border border-border bg-background px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
-                          Enter
-                        </kbd>
-                      </div>
+                      <KbdGroup>
+                        <Kbd>⌘</Kbd>
+                        <Kbd>Enter</Kbd>
+                      </KbdGroup>
                     )}
                 </div>
-              </button>
+              </Button>
             </ContextMenuTrigger>
             <ContextMenuContent className="w-48">
               <ContextMenuItem onClick={() => handleCopy(bookmark)}>
                 <Copy className="mr-2 h-4 w-4" />
                 <span>Copy</span>
-                <span className="ml-auto flex gap-0.5 text-xs text-muted-foreground">
-                  <kbd className="rounded border bg-muted px-1 text-sm">⌘</kbd>
-                  <kbd className="rounded border bg-muted px-1">C</kbd>
-                </span>
+                <KbdGroup className="ml-auto">
+                  <Kbd>⌘</Kbd>
+                  <Kbd>C</Kbd>
+                </KbdGroup>
               </ContextMenuItem>
               <ContextMenuItem onClick={() => handleStartRename(bookmark)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 <span>Rename</span>
-                <span className="ml-auto flex gap-0.5 text-xs text-muted-foreground">
-                  <kbd className="rounded border bg-muted px-1 text-sm">⌘</kbd>
-                  <kbd className="rounded border bg-muted px-1">E</kbd>
-                </span>
+                <KbdGroup className="ml-auto">
+                  <Kbd>⌘</Kbd>
+                  <Kbd>E</Kbd>
+                </KbdGroup>
               </ContextMenuItem>
               <ContextMenuItem
                 onClick={() => onDelete(bookmark.id)}
                 className="text-destructive focus:text-destructive"
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="mr-2 h-4 w-4 text-destructive" />
                 <span>Delete</span>
-                <span className="ml-auto flex gap-0.5 text-xs text-muted-foreground">
-                  <kbd className="rounded border bg-muted px-1 text-sm">⌘</kbd>
-                  <kbd className="rounded border bg-muted px-1">⌫</kbd>
-                </span>
+                <KbdGroup className="ml-auto">
+                  <Kbd>⌘</Kbd>
+                  <Kbd>⌫</Kbd>
+                </KbdGroup>
               </ContextMenuItem>
               {bookmark.url && (
                 <ContextMenuItem onClick={() => onRefetch(bookmark.id)}>

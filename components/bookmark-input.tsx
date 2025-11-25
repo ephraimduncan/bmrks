@@ -3,6 +3,8 @@
 import type React from "react";
 import { forwardRef, useEffect } from "react";
 import { Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 
 interface BookmarkInputProps {
   value: string;
@@ -47,26 +49,24 @@ export const BookmarkInput = forwardRef<HTMLInputElement, BookmarkInputProps>(
 
     return (
       <div className="relative mb-8">
-        <div className="flex items-center rounded-lg border border-border bg-background py-2 focus-within:ring-2 focus-within:ring-ring gap-0 px-2">
-          <Plus className="h-5 w-5 text-muted-foreground mr-1.5" />
-          <input
-            ref={ref}
-            type="text"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onPaste={handlePaste}
-            placeholder="Insert a link, color, or just plain text..."
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-          />
-          <div className="flex items-center gap-1">
-            <kbd className="rounded border border-border bg-muted text-xs font-medium text-muted-foreground font-serif py-0.5 px-1">
-              ⌘
-            </kbd>
-            <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
-              F
-            </kbd>
-          </div>
+        <Input
+          ref={ref}
+          className="peer ps-8 pe-16"
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          placeholder="Insert a link, color, or just plain text..."
+        />
+        <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+          <Plus size={16} />
+        </div>
+        <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 text-muted-foreground/80 peer-disabled:opacity-50">
+          <KbdGroup>
+            <Kbd>⌘</Kbd>
+            <Kbd>F</Kbd>
+          </KbdGroup>
         </div>
       </div>
     );
