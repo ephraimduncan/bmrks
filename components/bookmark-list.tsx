@@ -77,7 +77,7 @@ export function BookmarkList({
     });
   };
 
-  const handleClick = (bookmark: Bookmark, index: number) => {
+  const handleClick = (bookmark: Bookmark) => {
     if (renamingId) return;
     onSelect(-1);
 
@@ -128,7 +128,7 @@ export function BookmarkList({
             <ContextMenuTrigger asChild>
               <button
                 type="button"
-                onClick={() => handleClick(bookmark, index)}
+                onClick={() => handleClick(bookmark)}
                 onMouseEnter={() => onHoverChange(index)}
                 onMouseLeave={() => onHoverChange(-1)}
                 className={cn(
