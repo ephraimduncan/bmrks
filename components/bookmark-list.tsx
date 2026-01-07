@@ -273,6 +273,8 @@ function BookmarkIcon({
   bookmark: BookmarkItem;
   isCopied?: boolean;
 }) {
+  const [faviconError, setFaviconError] = useState(false);
+
   if (isCopied) {
     return (
       <div className="flex h-5 w-5 items-center justify-center">
@@ -302,16 +304,14 @@ function BookmarkIcon({
     }
   }
 
-  if (bookmark.favicon) {
+  if (bookmark.favicon && !faviconError) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={bookmark.favicon || "/placeholder.svg"}
+        src={bookmark.favicon}
         alt=""
         className="h-5 w-5 rounded object-contain"
-        onError={(e) => {
-          e.currentTarget.style.display = "none";
-        }}
+        onError={() => setFaviconError(true)}
       />
     );
   }
