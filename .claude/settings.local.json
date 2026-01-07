@@ -6,7 +6,8 @@
       "Bash(npx prisma generate:*)",
       "Bash(npx prisma db push:*)",
       "Bash(bun install:*)",
-      "mcp__context7__query-docs"
+      "mcp__context7__query-docs",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
