@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
@@ -15,16 +14,20 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { OAuthButton } from "@/components/oauth-button";
+import { useAutofill } from "@/hooks/use-autofill";
 import { signIn } from "@/lib/auth-client";
 import { loginSchema, type LoginFormData } from "@/lib/schema";
+
+const LOGIN_FIELDS = [
+  { name: "email", id: "email" },
+  { name: "password", id: "password" },
+] as const;
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
-
-  const formRef = useRef<HTMLFormElement>(null);
 
   const {
     register,
@@ -40,39 +43,8 @@ export function LoginForm({
     },
   });
 
-  // Handle password manager autofill
-  // Password managers inject values directly into DOM, bypassing React events
-  useEffect(() => {
-    const checkAutofill = () => {
-      if (!formRef.current) return;
-
-      const fields = [
-        { name: "email", id: "email" },
-        { name: "password", id: "password" },
-      ] as const;
-
-      fields.forEach(({ name, id }) => {
-        const input = formRef.current?.querySelector<HTMLInputElement>(
-          `#${id}`
-        );
-        if (input?.value) {
-          setValue(name, input.value, { shouldValidate: true });
-        }
-      });
-    };
-
-    // Check after a short delay to allow password managers to fill
-    const timeoutId = setTimeout(checkAutofill, 100);
-
-    // Also listen for input events which some password managers trigger
-    const form = formRef.current;
-    form?.addEventListener("input", checkAutofill);
-
-    return () => {
-      clearTimeout(timeoutId);
-      form?.removeEventListener("input", checkAutofill);
-    };
-  }, [setValue]);
+  // Detect password manager autofill via CSS animation
+  const formRef = useAutofill(setValue, LOGIN_FIELDS);
 
   const onSubmit = async (data: LoginFormData) => {
     const { error } = await signIn.email({
