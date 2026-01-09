@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
@@ -23,10 +24,13 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
   const router = useRouter();
 
+  const formRef = useRef<HTMLFormElement>(null);
+
   const {
     register,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -37,6 +41,42 @@ export function SignupForm({
       confirmPassword: "",
     },
   });
+
+  // Handle password manager autofill
+  // Password managers inject values directly into DOM, bypassing React events
+  useEffect(() => {
+    const checkAutofill = () => {
+      if (!formRef.current) return;
+
+      const fields = [
+        { name: "name", id: "name" },
+        { name: "email", id: "email" },
+        { name: "password", id: "password" },
+        { name: "confirmPassword", id: "confirm-password" },
+      ] as const;
+
+      fields.forEach(({ name, id }) => {
+        const input = formRef.current?.querySelector<HTMLInputElement>(
+          `#${id}`
+        );
+        if (input?.value) {
+          setValue(name, input.value, { shouldValidate: true });
+        }
+      });
+    };
+
+    // Check after a short delay to allow password managers to fill
+    const timeoutId = setTimeout(checkAutofill, 100);
+
+    // Also listen for input events which some password managers trigger
+    const form = formRef.current;
+    form?.addEventListener("input", checkAutofill);
+
+    return () => {
+      clearTimeout(timeoutId);
+      form?.removeEventListener("input", checkAutofill);
+    };
+  }, [setValue]);
 
   const onSubmit = async (data: SignupFormData) => {
     const { error } = await signUp.email({
@@ -75,7 +115,7 @@ export function SignupForm({
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup className="gap-4">
           <Field>
             <FieldLabel htmlFor="name">Name</FieldLabel>
@@ -83,6 +123,7 @@ export function SignupForm({
               id="name"
               type="text"
               placeholder="Ephraim Duncan"
+              autoComplete="name"
               {...register("name")}
             />
             {errors.name && (
@@ -95,6 +136,7 @@ export function SignupForm({
               id="email"
               type="email"
               placeholder="hello@ephraimduncan.com"
+              autoComplete="email"
               {...register("email")}
             />
             {errors.email && (
@@ -107,6 +149,7 @@ export function SignupForm({
               id="password"
               type="password"
               placeholder="********"
+              autoComplete="new-password"
               {...register("password")}
             />
             {errors.password && (
@@ -119,6 +162,7 @@ export function SignupForm({
               id="confirm-password"
               type="password"
               placeholder="********"
+              autoComplete="new-password"
               {...register("confirmPassword")}
             />
             {errors.confirmPassword && (

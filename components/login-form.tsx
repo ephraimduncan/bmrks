@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
@@ -23,10 +24,13 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const router = useRouter();
 
+  const formRef = useRef<HTMLFormElement>(null);
+
   const {
     register,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -35,6 +39,40 @@ export function LoginForm({
       password: "",
     },
   });
+
+  // Handle password manager autofill
+  // Password managers inject values directly into DOM, bypassing React events
+  useEffect(() => {
+    const checkAutofill = () => {
+      if (!formRef.current) return;
+
+      const fields = [
+        { name: "email", id: "email" },
+        { name: "password", id: "password" },
+      ] as const;
+
+      fields.forEach(({ name, id }) => {
+        const input = formRef.current?.querySelector<HTMLInputElement>(
+          `#${id}`
+        );
+        if (input?.value) {
+          setValue(name, input.value, { shouldValidate: true });
+        }
+      });
+    };
+
+    // Check after a short delay to allow password managers to fill
+    const timeoutId = setTimeout(checkAutofill, 100);
+
+    // Also listen for input events which some password managers trigger
+    const form = formRef.current;
+    form?.addEventListener("input", checkAutofill);
+
+    return () => {
+      clearTimeout(timeoutId);
+      form?.removeEventListener("input", checkAutofill);
+    };
+  }, [setValue]);
 
   const onSubmit = async (data: LoginFormData) => {
     const { error } = await signIn.email({
@@ -72,7 +110,7 @@ export function LoginForm({
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup className="gap-4">
           <Field>
             <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -80,6 +118,7 @@ export function LoginForm({
               id="email"
               type="email"
               placeholder="hello@ephraimduncan.com"
+              autoComplete="email"
               {...register("email")}
             />
             {errors.email && (
@@ -100,6 +139,7 @@ export function LoginForm({
               id="password"
               type="password"
               placeholder="********"
+              autoComplete="current-password"
               {...register("password")}
             />
             {errors.password && (
