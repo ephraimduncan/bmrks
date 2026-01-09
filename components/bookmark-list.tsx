@@ -20,7 +20,14 @@ import {
   RefreshCw,
   ChevronsRight,
   Check,
+  Bookmark,
 } from "lucide-react";
+import {
+  Empty,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty";
 import { cn, parseColor } from "@/lib/utils";
 import { type BookmarkItem, type GroupItem } from "@/lib/schema";
 
@@ -114,6 +121,18 @@ export function BookmarkList({
     onFinishRename();
     setEditValue("");
   };
+
+  if (bookmarks.length === 0) {
+    return (
+      <Empty className="border-none py-16">
+        <EmptyMedia>
+          <Bookmark className="size-5 text-muted-foreground fill-muted-foreground" />
+        </EmptyMedia>
+        <EmptyTitle>No bookmarks here</EmptyTitle>
+        <EmptyDescription>Add some cool links to get started</EmptyDescription>
+      </Empty>
+    );
+  }
 
   return (
     <div>
