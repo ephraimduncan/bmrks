@@ -19,7 +19,7 @@ interface FieldConfig<T extends FieldValues> {
  */
 export function useAutofill<T extends FieldValues>(
   setValue: UseFormSetValue<T>,
-  fields: FieldConfig<T>[]
+  fields: readonly FieldConfig<T>[]
 ): RefObject<HTMLFormElement | null> {
   const formRef = useRef<HTMLFormElement>(null);
 
