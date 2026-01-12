@@ -278,42 +278,35 @@ export function DashboardContent({
     (value: string) => {
       if (!currentGroupId) return;
 
-      const lines = value
-        .split("\n")
-        .map((l) => l.trim())
-        .filter(Boolean);
+      const trimmedValue = value.trim();
+      if (!trimmedValue) return;
 
-      lines.forEach((line) => {
-        const colorResult = parseColor(line);
-        if (colorResult.isColor) {
-          createBookmarkMutation.mutate({
-            title: colorResult.original || line,
-            url: "",
-            type: "color",
-            color: colorResult.hex,
-            groupId: currentGroupId,
-          });
-          return;
-        }
+      const colorResult = parseColor(trimmedValue);
 
-        if (isUrl(line)) {
-          const url = normalizeUrl(line);
-          createBookmarkMutation.mutate({
-            title: new URL(url).hostname.replace("www.", ""),
-            url,
-            type: "link",
-            groupId: currentGroupId,
-          });
-          return;
-        }
-
+      if (colorResult.isColor) {
         createBookmarkMutation.mutate({
-          title: line,
+          title: colorResult.original || trimmedValue,
+          url: "",
+          type: "color",
+          color: colorResult.hex,
+          groupId: currentGroupId,
+        });
+      } else if (!trimmedValue.includes("\n") && isUrl(trimmedValue)) {
+        const url = normalizeUrl(trimmedValue);
+        createBookmarkMutation.mutate({
+          title: new URL(url).hostname.replace("www.", ""),
+          url,
+          type: "link",
+          groupId: currentGroupId,
+        });
+      } else {
+        createBookmarkMutation.mutate({
+          title: trimmedValue,
           url: "",
           type: "text",
           groupId: currentGroupId,
         });
-      });
+      }
 
       setSearchQuery("");
       setSelectedIndex(-1);

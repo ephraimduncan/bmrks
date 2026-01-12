@@ -195,7 +195,7 @@ export function BookmarkList({
                       }}
                     />
                   ) : (
-                    <span className="text-sm font-normal">
+                    <span className="text-sm font-normal truncate">
                       {copiedId === bookmark.id ? "Copied" : bookmark.title}
                     </span>
                   )}
