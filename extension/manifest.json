@@ -7,8 +7,7 @@
     "activeTab",
     "contextMenus",
     "storage",
-    "notifications",
-    "management"
+    "notifications"
   ],
   "host_permissions": ["https://minimal.so/*", "http://localhost:3000/*"],
   "action": {
