@@ -47,3 +47,7 @@ prisma/generated
 *.db
 
 .vscode
+
+# extension
+/extension-profile
+/extension-dist

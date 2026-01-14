@@ -5,7 +5,9 @@
       "Bash(find:*)",
       "Bash(npx prisma generate:*)",
       "Bash(npx prisma db push:*)",
-      "Bash(bun install:*)"
+      "Bash(bun install:*)",
+      "Bash(convert:*)",
+      "Bash(bunx next build:*)"
     ],
     "deny": [],
     "ask": []

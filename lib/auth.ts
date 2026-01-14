@@ -3,11 +3,14 @@ import { createAuthMiddleware } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "./db";
 
+const extensionId = process.env.CHROME_EXTENSION_ID;
+
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(db, {
     provider: "sqlite",
   }),
+  trustedOrigins: extensionId ? [`chrome-extension://${extensionId}`] : [],
   emailAndPassword: {
     enabled: true,
   },
