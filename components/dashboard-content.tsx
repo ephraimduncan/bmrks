@@ -111,7 +111,11 @@ export function DashboardContent({
         )
       );
 
-      return { previousBookmarks, previousGroups, groupId: newBookmark.groupId };
+      return {
+        previousBookmarks,
+        previousGroups,
+        groupId: newBookmark.groupId,
+      };
     },
     onError: (_err, _newBookmark, context) => {
       if (context?.previousBookmarks) {
@@ -144,14 +148,18 @@ export function DashboardContent({
       _sourceGroupId?: string;
     }) => {
       if (data.id.startsWith("temp-")) {
-        return { id: data.id, title: data.title ?? "" } as any;
+        return { id: data.id, title: data.title ?? "" } as Pick<
+          BookmarkItem,
+          "id" | "title"
+        >;
       }
       const { _sourceGroupId, ...updateData } = data;
       return client.bookmark.update(updateData);
     },
     onMutate: async (data) => {
       const { id, groupId: targetGroupId, _sourceGroupId, ...updates } = data;
-      const isMove = targetGroupId && _sourceGroupId && targetGroupId !== _sourceGroupId;
+      const isMove =
+        targetGroupId && _sourceGroupId && targetGroupId !== _sourceGroupId;
 
       await queryClient.cancelQueries({ queryKey: ["bookmarks"] });
       await queryClient.cancelQueries({ queryKey: ["groups"] });
@@ -159,14 +167,12 @@ export function DashboardContent({
       const previousGroups = queryClient.getQueryData<GroupItem[]>(["groups"]);
 
       if (isMove) {
-        const previousSourceBookmarks = queryClient.getQueryData<BookmarkItem[]>([
-          "bookmarks",
-          _sourceGroupId,
-        ]);
-        const previousTargetBookmarks = queryClient.getQueryData<BookmarkItem[]>([
-          "bookmarks",
-          targetGroupId,
-        ]);
+        const previousSourceBookmarks = queryClient.getQueryData<
+          BookmarkItem[]
+        >(["bookmarks", _sourceGroupId]);
+        const previousTargetBookmarks = queryClient.getQueryData<
+          BookmarkItem[]
+        >(["bookmarks", targetGroupId]);
 
         const movedBookmark = previousSourceBookmarks?.find((b) => b.id === id);
 
@@ -178,13 +184,19 @@ export function DashboardContent({
 
           queryClient.setQueryData<BookmarkItem[]>(
             ["bookmarks", targetGroupId],
-            (old) => [{ ...movedBookmark, groupId: targetGroupId }, ...(old ?? [])]
+            (old) => [
+              { ...movedBookmark, groupId: targetGroupId },
+              ...(old ?? []),
+            ]
           );
 
           queryClient.setQueryData<GroupItem[]>(["groups"], (old) =>
             old?.map((g) => {
               if (g.id === _sourceGroupId) {
-                return { ...g, bookmarkCount: Math.max(0, (g.bookmarkCount ?? 0) - 1) };
+                return {
+                  ...g,
+                  bookmarkCount: Math.max(0, (g.bookmarkCount ?? 0) - 1),
+                };
               }
               if (g.id === targetGroupId) {
                 return { ...g, bookmarkCount: (g.bookmarkCount ?? 0) + 1 };
@@ -211,22 +223,25 @@ export function DashboardContent({
 
       queryClient.setQueryData<BookmarkItem[]>(
         ["bookmarks", sourceGroupId],
-        (old) =>
-          old?.map((b) =>
-            b.id === id ? { ...b, ...updates } : b
-          ) ?? []
+        (old) => old?.map((b) => (b.id === id ? { ...b, ...updates } : b)) ?? []
       );
 
       return { previousBookmarks, sourceGroupId, previousGroups };
     },
     onError: (_err, data, context) => {
-      if (context?.previousSourceBookmarks !== undefined && context?.sourceGroupId) {
+      if (
+        context?.previousSourceBookmarks !== undefined &&
+        context?.sourceGroupId
+      ) {
         queryClient.setQueryData(
           ["bookmarks", context.sourceGroupId],
           context.previousSourceBookmarks
         );
       }
-      if (context?.previousTargetBookmarks !== undefined && context?.targetGroupId) {
+      if (
+        context?.previousTargetBookmarks !== undefined &&
+        context?.targetGroupId
+      ) {
         queryClient.setQueryData(
           ["bookmarks", context.targetGroupId],
           context.previousTargetBookmarks
@@ -316,7 +331,11 @@ export function DashboardContent({
   });
 
   const createGroupMutation = useMutation({
-    mutationFn: (data: { name: string; color: string; _optimisticId?: string }) => {
+    mutationFn: (data: {
+      name: string;
+      color: string;
+      _optimisticId?: string;
+    }) => {
       const { _optimisticId, ...createData } = data;
       return client.group.create(createData);
     },
@@ -341,7 +360,11 @@ export function DashboardContent({
       setSelectedGroupId(optimisticGroup.id);
       setSelectedIndex(-1);
 
-      return { previousGroups, previousSelectedGroupId, optimisticId: optimisticGroup.id };
+      return {
+        previousGroups,
+        previousSelectedGroupId,
+        optimisticId: optimisticGroup.id,
+      };
     },
     onError: (_err, _newGroup, context) => {
       if (context?.previousGroups) {
@@ -365,12 +388,14 @@ export function DashboardContent({
       const previousGroups = queryClient.getQueryData<GroupItem[]>(["groups"]);
       const previousSelectedGroupId = selectedGroupId;
 
-      queryClient.setQueryData<GroupItem[]>(["groups"], (old) =>
-        old?.filter((g) => g.id !== data.id) ?? []
+      queryClient.setQueryData<GroupItem[]>(
+        ["groups"],
+        (old) => old?.filter((g) => g.id !== data.id) ?? []
       );
 
       if (currentGroupId === data.id) {
-        const remainingGroups = previousGroups?.filter((g) => g.id !== data.id) ?? [];
+        const remainingGroups =
+          previousGroups?.filter((g) => g.id !== data.id) ?? [];
         setSelectedGroupId(remainingGroups[0]?.id ?? null);
         setSelectedIndex(-1);
       }
@@ -415,7 +440,10 @@ export function DashboardContent({
 
   const handleDeleteBookmark = useCallback(
     (id: string) => {
-      deleteBookmarkMutation.mutate({ id, _groupId: currentGroupId ?? undefined });
+      deleteBookmarkMutation.mutate({
+        id,
+        _groupId: currentGroupId ?? undefined,
+      });
     },
     [deleteBookmarkMutation, currentGroupId]
   );
@@ -555,12 +583,30 @@ export function DashboardContent({
 
   const handleCreateGroup = useCallback(
     (name: string) => {
-      const colors = ["#74B06F", "#4A90D9", "#E6A23C", "#9B59B6", "#E74C3C"];
+      const palette = [
+        "#3E63DD",
+        "#208368",
+        "#FFDC00",
+        "#CE2C31",
+        "#53195D",
+        "#0086F0FA",
+        "#838383",
+        "#74B06F",
+        "#4A90D9",
+        "#E6A23C",
+        "#9B59B6",
+        "#E74C3C",
+        "#202020",
+      ];
+      const usedColors = new Set(groups.map((g) => g.color));
+      const availableColors = palette.filter((c) => !usedColors.has(c));
+      const color =
+        availableColors.length > 0
+          ? availableColors[0]
+          : palette[groups.length % palette.length];
+
       createGroupMutation.mutate(
-        {
-          name,
-          color: colors[Math.floor(Math.random() * colors.length)],
-        },
+        { name, color },
         {
           onSuccess: (newGroup) => {
             setSelectedGroupId(newGroup.id);
@@ -568,7 +614,7 @@ export function DashboardContent({
         }
       );
     },
-    [createGroupMutation]
+    [createGroupMutation, groups]
   );
 
   const handleDeleteGroup = useCallback(
