@@ -35,6 +35,12 @@ export default function RootLayout({
             strategy="beforeInteractive"
           />
         )}
+        <Script
+          defer
+          src="https://analytics.duncan.land/script.js"
+          data-website-id="9c4de642-a2b5-4747-ae7b-38096c43b993"
+          strategy="afterInteractive"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
