@@ -238,9 +238,9 @@ export function BookmarkList({
               </ContextMenuItem>
               <ContextMenuItem
                 onClick={() => onDelete(bookmark.id)}
-                className="text-destructive focus:text-destructive"
+                variant="destructive"
               >
-                <Trash2 className="mr-2 h-4 w-4 text-destructive" />
+                <Trash2 className="mr-2 h-4 w-4" />
                 <span>Delete</span>
                 <KbdGroup className="ml-auto">
                   <Kbd>⌘</Kbd>
