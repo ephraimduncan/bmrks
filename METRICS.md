@@ -13,6 +13,12 @@
 - **TypeScript**: No errors
 - **ESLint**: No errors (3 pre-existing warnings in dashboard-content.tsx)
 
+### Dev Server Boot Time
+- **Cold start**: ~1133ms
+- **Warm start**: ~560ms (average of 2 runs)
+- **Average**: ~750ms
+- **Note**: Uses `optimizePackageImports` for @tabler/icons-react (eliminates barrel file overhead)
+
 ### Test Results
 - **Test framework**: Vitest + React Testing Library
 - **Tests passing**: 13/13

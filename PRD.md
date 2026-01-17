@@ -487,8 +487,8 @@ useEffect(() => {
 - [ ] Toast notifications appear on actions
 
 ### Performance Testing
-- [ ] Run `bun run build` - no build errors
-- [ ] Run `time bun dev` - measure boot time
+- [x] Run `bun run build` - no build errors
+- [x] Run `time bun dev` - measure boot time (avg ~750ms: cold ~1.1s, warm ~560ms)
 - [ ] Lighthouse Performance score 95+
 - [ ] No layout shift on page load
 - [ ] Smooth interactions (no jank)
