@@ -445,7 +445,7 @@ useEffect(() => {
 4. Profile with React DevTools before/after
 
 **Acceptance Criteria**:
-- [ ] Keyboard handler recreates less frequently
+- [x] Keyboard handler recreates less frequently
 - [ ] BookmarkIcon renders only when props change
 - [ ] React DevTools shows fewer re-renders
 

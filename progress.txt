@@ -39,3 +39,27 @@
 - TypeScript: No errors
 - ESLint: No new errors (3 pre-existing warnings unrelated to changes)
 - Build: Successful
+
+## Phase 4: Re-render Optimizations - PARTIAL (Keyboard Handler)
+
+### Changes Made:
+1. Added refs for state values used in keyboard handler:
+   - `filteredBookmarksRef`, `selectedIndexRef`, `hoveredIndexRef`, `renamingIdRef`, `handleDeleteBookmarkRef`
+2. Added sync effects to keep refs updated with latest state values
+3. Refactored keyboard handler useEffect to read from refs instead of state
+4. Reduced effect dependencies from `[filteredBookmarks, selectedIndex, hoveredIndex, renamingId, handleDeleteBookmark]` to `[]`
+
+### Implementation Notes:
+- The keyboard handler now only subscribes once on mount (empty dependency array)
+- State values are read from refs at event time, ensuring latest values are used
+- This eliminates event listener teardown/setup on every state change
+- Rule 5.1 (Defer State Reads) applied to prevent unnecessary re-subscriptions
+
+### Verification:
+- TypeScript: No errors
+- ESLint: No new errors (3 pre-existing warnings unrelated to changes)
+- Build: Successful
+
+### Remaining Phase 4 Tasks:
+- [ ] Wrap BookmarkIcon with React.memo() (Rule 5.2)
+- [ ] Use explicit conditional rendering - ternary instead of && (Rule 6.7)
