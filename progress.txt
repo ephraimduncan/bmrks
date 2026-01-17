@@ -193,3 +193,27 @@ The current implementation already follows the optimal pattern as described in t
 - Marked "Dev boot time improved" as complete
 - Marked "No regressions in functionality" as complete
 - Left "Lighthouse Performance score 95+" unchecked (manual test required)
+
+## Test Infrastructure Fix - COMPLETED
+
+### Issue Identified:
+- `bun test` invokes bun's built-in test runner, not npm scripts
+- This caused tests to fail with "document is not defined" (jsdom not loaded)
+- Tests were passing in progress.txt because they were run with `bun vitest run` directly
+
+### Changes Made:
+1. Updated `package.json` test scripts to explicitly specify config:
+   - `"test": "vitest run --config vitest.config.ts"`
+   - `"test:watch": "vitest --config vitest.config.ts"`
+2. Updated `METRICS.md` to document correct command: `bun run test`
+3. Updated `PRD.md` to use correct command in acceptance criteria
+
+### Implementation Notes:
+- With bun, `bun test` ≠ `bun run test` (bun has a built-in test runner)
+- Must use `bun run test` to execute the package.json script
+- Explicit `--config` flag ensures vitest loads jsdom environment correctly
+
+### Verification:
+- TypeScript: No errors
+- ESLint: No new errors (3 pre-existing warnings unrelated to changes)
+- Tests: All 13 tests passing with `bun run test`

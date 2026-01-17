@@ -17,6 +17,7 @@
 - **Test framework**: Vitest + React Testing Library
 - **Tests passing**: 13/13
 - **Test duration**: 1.34s
+- **Command**: `bun run test` (note: `bun test` uses bun's built-in runner, not vitest)
 
 ## Optimizations Applied
 
