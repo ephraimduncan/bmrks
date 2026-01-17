@@ -1,13 +1,12 @@
 import { ORPCError, os } from "@orpc/server";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import type { Session } from "@/lib/schema";
+import { auth, type Session } from "@/lib/auth";
 
 export const base = os.use(async ({ next }) => {
   const headersList = await headers();
-  const session = (await auth.api.getSession({
+  const session: Session | null = await auth.api.getSession({
     headers: headersList,
-  })) as Session;
+  });
 
   return next({
     context: {

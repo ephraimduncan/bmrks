@@ -1,33 +1,5 @@
 import { z } from "zod";
 
-export const userSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  email: z.string(),
-  emailVerified: z.boolean(),
-  image: z.string().nullable().optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export const sessionDataSchema = z.object({
-  id: z.string(),
-  expiresAt: z.date(),
-  token: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  ipAddress: z.string().nullable().optional(),
-  userAgent: z.string().nullable().optional(),
-  userId: z.string(),
-});
-
-export const sessionSchema = z
-  .object({
-    user: userSchema,
-    session: sessionDataSchema,
-  })
-  .nullable();
-
 export const bookmarkTypeSchema = z.enum(["link", "color", "text"]);
 
 export const groupSchema = z.object({
@@ -123,9 +95,6 @@ export const loginSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-export type User = z.infer<typeof userSchema>;
-export type SessionData = z.infer<typeof sessionDataSchema>;
-export type Session = z.infer<typeof sessionSchema>;
 export type BookmarkType = z.infer<typeof bookmarkTypeSchema>;
 export type Group = z.infer<typeof groupSchema>;
 export type GroupItem = z.infer<typeof groupItemSchema>;

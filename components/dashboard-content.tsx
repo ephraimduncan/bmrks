@@ -11,12 +11,8 @@ import { parseColor, isUrl, normalizeUrl } from "@/lib/utils";
 import { client } from "@/lib/orpc";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useFocusRefetch } from "@/hooks/use-focus-refetch";
-import type {
-  BookmarkType,
-  GroupItem,
-  BookmarkItem,
-  Session,
-} from "@/lib/schema";
+import type { BookmarkType, GroupItem, BookmarkItem } from "@/lib/schema";
+import type { Session } from "@/lib/auth";
 
 interface DashboardContentProps {
   session: NonNullable<Session>;
