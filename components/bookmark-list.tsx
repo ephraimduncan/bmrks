@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -14,14 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import {
-  Copy,
-  Pencil,
-  Trash2,
-  RefreshCw,
-  ChevronsRight,
-  Check,
-  Bookmark,
-} from "lucide-react";
+  IconCopy,
+  IconPencil,
+  IconTrash,
+  IconRefresh,
+  IconChevronsRight,
+  IconCheck,
+  IconBookmark,
+} from "@tabler/icons-react";
 import {
   Empty,
   EmptyMedia,
@@ -30,6 +30,16 @@ import {
 } from "@/components/ui/empty";
 import { cn, parseColor } from "@/lib/utils";
 import { type BookmarkItem, type GroupItem } from "@/lib/schema";
+
+const EMPTY_STATE = (
+  <Empty className="border-none py-16">
+    <EmptyMedia>
+      <IconBookmark className="size-5 text-muted-foreground fill-muted-foreground" />
+    </EmptyMedia>
+    <EmptyTitle>No bookmarks here</EmptyTitle>
+    <EmptyDescription>Add some cool links to get started</EmptyDescription>
+  </Empty>
+);
 
 interface BookmarkListProps {
   bookmarks: BookmarkItem[];
@@ -123,15 +133,7 @@ export function BookmarkList({
   };
 
   if (bookmarks.length === 0) {
-    return (
-      <Empty className="border-none py-16">
-        <EmptyMedia>
-          <Bookmark className="size-5 text-muted-foreground fill-muted-foreground" />
-        </EmptyMedia>
-        <EmptyTitle>No bookmarks here</EmptyTitle>
-        <EmptyDescription>Add some cool links to get started</EmptyDescription>
-      </Empty>
-    );
+    return EMPTY_STATE;
   }
 
   return (
@@ -199,29 +201,29 @@ export function BookmarkList({
                       {copiedId === bookmark.id ? "Copied" : bookmark.title}
                     </span>
                   )}
-                  {bookmark.url && !renamingId && copiedId !== bookmark.id && (
+                  {bookmark.url && !renamingId && copiedId !== bookmark.id ? (
                     <span className="text-[13px] text-muted-foreground">
                       {new URL(bookmark.url).hostname.replace("www.", "")}
                     </span>
-                  )}
+                  ) : null}
                 </div>
                 <div className="relative w-[90px] h-5 flex items-center justify-end">
-                  {!((selectedIndex === index || hoveredIndex === index) && !renamingId) && (
+                  {!((selectedIndex === index || hoveredIndex === index) && !renamingId) ? (
                     <span className="text-[13px] text-muted-foreground whitespace-nowrap">
                       {formatDate(bookmark.createdAt)}
                     </span>
-                  )}
-                  {(selectedIndex === index || hoveredIndex === index) && !renamingId && (
+                  ) : null}
+                  {(selectedIndex === index || hoveredIndex === index) && !renamingId ? (
                     <KbdGroup>
                       <Kbd>⌘</Kbd>
                       <Kbd>Enter</Kbd>
                     </KbdGroup>
-                  )}
+                  ) : null}
                 </div>
             </ContextMenuTrigger>
             <ContextMenuContent className="w-48">
               <ContextMenuItem onClick={() => handleCopy(bookmark)}>
-                <Copy className="mr-2 h-4 w-4" />
+                <IconCopy className="mr-2 h-4 w-4" />
                 <span>Copy</span>
                 <KbdGroup className="ml-auto">
                   <Kbd>⌘</Kbd>
@@ -229,7 +231,7 @@ export function BookmarkList({
                 </KbdGroup>
               </ContextMenuItem>
               <ContextMenuItem onClick={() => handleStartRename(bookmark)}>
-                <Pencil className="mr-2 h-4 w-4" />
+                <IconPencil className="mr-2 h-4 w-4" />
                 <span>Rename</span>
                 <KbdGroup className="ml-auto">
                   <Kbd>⌘</Kbd>
@@ -240,23 +242,23 @@ export function BookmarkList({
                 onClick={() => onDelete(bookmark.id)}
                 variant="destructive"
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <IconTrash className="mr-2 h-4 w-4" />
                 <span>Delete</span>
                 <KbdGroup className="ml-auto">
                   <Kbd>⌘</Kbd>
                   <Kbd>⌫</Kbd>
                 </KbdGroup>
               </ContextMenuItem>
-              {bookmark.url && (
+              {bookmark.url ? (
                 <ContextMenuItem onClick={() => onRefetch(bookmark.id)}>
-                  <RefreshCw className="mr-2 h-4 w-4" />
+                  <IconRefresh className="mr-2 h-4 w-4" />
                   <span>Refetch</span>
                 </ContextMenuItem>
-              )}
-              {groups.length > 1 && (
+              ) : null}
+              {groups.length > 1 ? (
                 <ContextMenuSub>
                   <ContextMenuSubTrigger>
-                    <ChevronsRight className="mr-2 h-4 w-4" />
+                    <IconChevronsRight className="mr-2 h-4 w-4" />
                     <span>Move To...</span>
                   </ContextMenuSubTrigger>
                   <ContextMenuSubContent className="w-40">
@@ -276,7 +278,7 @@ export function BookmarkList({
                       ))}
                   </ContextMenuSubContent>
                 </ContextMenuSub>
-              )}
+              ) : null}
             </ContextMenuContent>
           </ContextMenu>
         ))}
@@ -285,7 +287,7 @@ export function BookmarkList({
   );
 }
 
-function BookmarkIcon({
+const BookmarkIcon = memo(function BookmarkIcon({
   bookmark,
   isCopied,
 }: {
@@ -297,7 +299,7 @@ function BookmarkIcon({
   if (isCopied) {
     return (
       <div className="flex h-5 w-5 items-center justify-center">
-        <Check className="h-4 w-4 text-foreground" />
+        <IconCheck className="h-4 w-4 text-foreground" />
       </div>
     );
   }
@@ -353,4 +355,4 @@ function BookmarkIcon({
       </svg>
     </div>
   );
-}
+});

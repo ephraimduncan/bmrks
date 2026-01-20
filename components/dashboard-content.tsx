@@ -35,6 +35,14 @@ export function DashboardContent({
   const inputRef = useRef<HTMLInputElement>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
 
+  // Refs to store latest values for stable keyboard handler
+  const filteredBookmarksRef = useRef<BookmarkItem[]>([]);
+  const selectedIndexRef = useRef<number>(-1);
+  const hoveredIndexRef = useRef<number>(-1);
+  const renamingIdRef = useRef<string | null>(null);
+  const handleDeleteBookmarkRef = useRef<(id: string) => void>(() => {});
+  const handleStartRenameRef = useRef<(id: string) => void>(() => {});
+
   const groupsQuery = useQuery({
     queryKey: ["groups"],
     queryFn: () => client.group.list(),
@@ -454,9 +462,34 @@ export function DashboardContent({
     });
   }, [bookmarks, debouncedSearchQuery]);
 
+  // Sync refs with state for stable keyboard handler
+  useEffect(() => {
+    filteredBookmarksRef.current = filteredBookmarks;
+  }, [filteredBookmarks]);
+
+  useEffect(() => {
+    selectedIndexRef.current = selectedIndex;
+  }, [selectedIndex]);
+
+  useEffect(() => {
+    hoveredIndexRef.current = hoveredIndex;
+  }, [hoveredIndex]);
+
+  useEffect(() => {
+    renamingIdRef.current = renamingId;
+  }, [renamingId]);
+
+  useEffect(() => {
+    handleDeleteBookmarkRef.current = handleDeleteBookmark;
+  }, [handleDeleteBookmark]);
+
+  useEffect(() => {
+    handleStartRenameRef.current = handleStartRename;
+  }, [handleStartRename]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (renamingId) return;
+      if (renamingIdRef.current) return;
 
       // Allow all keyboard events when focus is on the search input
       if (document.activeElement === inputRef.current) {
@@ -471,11 +504,11 @@ export function DashboardContent({
         return; // Let the browser handle Ctrl+A, Ctrl+C, etc.
       }
 
+      const bookmarks = filteredBookmarksRef.current;
+
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelectedIndex((prev) =>
-          Math.min(prev + 1, filteredBookmarks.length - 1)
-        );
+        setSelectedIndex((prev) => Math.min(prev + 1, bookmarks.length - 1));
         return;
       }
       if (e.key === "ArrowUp") {
@@ -484,9 +517,12 @@ export function DashboardContent({
         return;
       }
 
-      const activeIndex = hoveredIndex >= 0 ? hoveredIndex : selectedIndex;
-      if (activeIndex < 0 || activeIndex >= filteredBookmarks.length) return;
-      const activeBookmark = filteredBookmarks[activeIndex];
+      const activeIndex =
+        hoveredIndexRef.current >= 0
+          ? hoveredIndexRef.current
+          : selectedIndexRef.current;
+      if (activeIndex < 0 || activeIndex >= bookmarks.length) return;
+      const activeBookmark = bookmarks[activeIndex];
       if (!activeBookmark) return;
 
       if (e.key === "Enter" && document.activeElement !== inputRef.current) {
@@ -508,24 +544,18 @@ export function DashboardContent({
 
       if ((e.metaKey || e.ctrlKey) && e.key === "e") {
         e.preventDefault();
-        handleStartRename(activeBookmark.id);
+        handleStartRenameRef.current(activeBookmark.id);
       }
 
       if ((e.metaKey || e.ctrlKey) && e.key === "Backspace") {
         e.preventDefault();
-        handleDeleteBookmark(activeBookmark.id);
+        handleDeleteBookmarkRef.current(activeBookmark.id);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    filteredBookmarks,
-    selectedIndex,
-    hoveredIndex,
-    renamingId,
-    handleDeleteBookmark,
-  ]);
+  }, []);
 
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
