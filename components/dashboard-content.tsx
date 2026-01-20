@@ -692,6 +692,7 @@ export function DashboardContent({
         onCreateGroup={handleCreateGroup}
         onDeleteGroup={handleDeleteGroup}
         userName={session.user.name}
+        userEmail={session.user.email}
       />
       <main className="mx-auto w-full max-w-2xl px-5 py-20">
         <BookmarkInput

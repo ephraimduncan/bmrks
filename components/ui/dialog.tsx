@@ -47,7 +47,7 @@ function DialogPopup({
       <DialogPrimitive.Popup
         data-slot="dialog-popup"
         className={cn(
-          "bg-background data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/10 grid max-w-[calc(100%-2rem)] gap-4 rounded-xl p-4 text-sm ring-1 duration-100 sm:max-w-sm fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none",
+          "bg-background data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/10 grid max-w-[calc(100%-2rem)] rounded-xl text-sm ring-1 duration-100 sm:max-w-sm fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none",
           className
         )}
         {...props}
@@ -62,7 +62,12 @@ function DialogPanel({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-panel"
-      className={cn("grid gap-4", className)}
+      className={cn(
+        "grid gap-4 px-6 pb-6",
+        "in-[[data-slot=dialog-popup]:has([data-slot=dialog-header])]:pt-1",
+        "in-[[data-slot=dialog-popup]:has([data-slot=dialog-footer])]:pb-5",
+        className
+      )}
       {...props}
     />
   )
@@ -113,7 +118,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("gap-2 flex flex-col", className)}
+      className={cn("flex flex-col gap-2 p-6 in-[[data-slot=dialog-popup]:has([data-slot=dialog-panel])]:pb-3", className)}
       {...props}
     />
   )
@@ -134,8 +139,8 @@ function DialogFooter({
       data-slot="dialog-footer"
       data-variant={variant}
       className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        variant === "default" && "bg-muted/50 -mx-4 -mb-4 rounded-b-xl border-t p-4",
+        "flex flex-col-reverse gap-2 px-4 py-3 sm:flex-row sm:justify-end sm:rounded-b-xl",
+        variant === "default" && "border-t bg-muted/50",
         className
       )}
       {...props}
@@ -154,7 +159,7 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-sm leading-none font-medium", className)}
+      className={cn("font-heading font-semibold text-xl leading-none", className)}
       {...props}
     />
   )
