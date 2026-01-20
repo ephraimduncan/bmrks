@@ -41,6 +41,7 @@ export function DashboardContent({
   const hoveredIndexRef = useRef<number>(-1);
   const renamingIdRef = useRef<string | null>(null);
   const handleDeleteBookmarkRef = useRef<(id: string) => void>(() => {});
+  const handleStartRenameRef = useRef<(id: string) => void>(() => {});
 
   const groupsQuery = useQuery({
     queryKey: ["groups"],
@@ -483,6 +484,10 @@ export function DashboardContent({
   }, [handleDeleteBookmark]);
 
   useEffect(() => {
+    handleStartRenameRef.current = handleStartRename;
+  }, [handleStartRename]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (renamingIdRef.current) return;
 
@@ -539,7 +544,7 @@ export function DashboardContent({
 
       if ((e.metaKey || e.ctrlKey) && e.key === "e") {
         e.preventDefault();
-        handleStartRename(activeBookmark.id);
+        handleStartRenameRef.current(activeBookmark.id);
       }
 
       if ((e.metaKey || e.ctrlKey) && e.key === "Backspace") {
