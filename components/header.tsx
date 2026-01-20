@@ -8,9 +8,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { IconSelector, IconPlus, IconCheck, IconTrash } from "@tabler/icons-react";
+import {
+  IconSelector,
+  IconPlus,
+  IconCheck,
+  IconTrash,
+  IconSettings,
+  IconLogout,
+} from "@tabler/icons-react";
 import { signOut } from "@/lib/auth-client";
 import {
   Dialog,
@@ -26,6 +43,7 @@ import { Form } from "@/components/ui/form";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { type GroupItem } from "@/lib/schema";
+import { SettingsDialog } from "@/components/settings-dialog";
 
 interface HeaderProps {
   groups: GroupItem[];
@@ -34,6 +52,7 @@ interface HeaderProps {
   onCreateGroup: (name: string) => void;
   onDeleteGroup?: (id: string) => void;
   userName: string;
+  userEmail: string;
 }
 
 export function Header({
@@ -43,10 +62,13 @@ export function Header({
   onCreateGroup,
   onDeleteGroup,
   userName,
+  userEmail,
 }: HeaderProps) {
   const router = useRouter();
   const [newGroupName, setNewGroupName] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [signOutOpen, setSignOutOpen] = useState(false);
   const [holdingGroupId, setHoldingGroupId] = useState<string | null>(null);
   const [holdProgress, setHoldProgress] = useState(0);
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -94,7 +116,7 @@ export function Header({
 
       holdTimerRef.current = setTimeout(updateProgress, 16);
     },
-    [groups.length, onDeleteGroup, cancelHold]
+    [groups.length, onDeleteGroup, cancelHold],
   );
 
   useEffect(() => {
@@ -132,7 +154,7 @@ export function Header({
                 onClick={() => onSelectGroup(group.id)}
                 className={cn(
                   "flex items-center justify-between rounded-lg",
-                  group.id === selectedGroup.id && "bg-accent"
+                  group.id === selectedGroup.id && "bg-accent",
                 )}
               >
                 <div className="flex items-center gap-2">
@@ -226,19 +248,66 @@ export function Header({
       <DropdownMenu>
         <DropdownMenuTrigger
           className="rounded-xl"
-          render={<Button variant="ghost" className="gap-2 px-2" />}
+          render={
+            <Button
+              variant="ghost"
+              className="w-44 justify-between gap-2 px-2"
+            />
+          }
         >
           <UserAvatar name={userName} />
-          <span>{userName}</span>
-          <IconSelector className="h-4 w-4 text-muted-foreground" />
+          <span className="truncate">{userName}</span>
+          <IconSelector className="h-4 w-4 shrink-0 text-muted-foreground" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="rounded-2xl">
-          <DropdownMenuItem className="rounded-lg">Settings</DropdownMenuItem>
-          <DropdownMenuItem className="rounded-lg" onClick={handleSignOut}>
+          <DropdownMenuItem
+            className="rounded-lg"
+            onClick={() => setSettingsOpen(true)}
+          >
+            <IconSettings className="h-4 w-4" />
+            Settings
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="rounded-lg"
+            render={
+              <a href="/chrome" target="_blank" rel="noopener noreferrer" />
+            }
+          >
+            <ChromeIcon />
+            Chrome Extension
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="rounded-lg"
+            onClick={() => setSignOutOpen(true)}
+          >
+            <IconLogout className="h-4 w-4" />
             Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <AlertDialog open={signOutOpen} onOpenChange={setSignOutOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-semibold text-xl<">
+              Sign out?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              You will need to sign in again to access your bookmarks.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel variant="ghost">Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={handleSignOut}>
+              Sign out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <SettingsDialog
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        user={{ name: userName, email: userEmail }}
+      />
     </header>
   );
 }
@@ -279,6 +348,28 @@ function UserAvatar({ name }: { name: string }) {
       >
         {name.charAt(0).toUpperCase()}
       </text>
+    </svg>
+  );
+}
+
+function ChromeIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="4" />
+      <line x1="21.17" y1="8" x2="12" y2="8" />
+      <line x1="3.95" y1="6.06" x2="8.54" y2="14" />
+      <line x1="10.88" y1="21.94" x2="15.46" y2="14" />
     </svg>
   );
 }
