@@ -196,6 +196,7 @@ export function BookmarkList({
                       checked={selectedIds.has(bookmark.id)}
                       onCheckedChange={() => onToggleSelection?.(bookmark.id)}
                       onClick={(e) => e.stopPropagation()}
+                      onPointerDown={(e) => e.stopPropagation()}
                     />
                   ) : (
                     <BookmarkIcon
