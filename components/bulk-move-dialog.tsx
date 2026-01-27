@@ -4,11 +4,10 @@ import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogClose,
+  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogPanel,
-  DialogPopup,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -61,7 +60,7 @@ export function BulkMoveDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogPopup className="sm:max-w-xs">
+      <DialogContent className="sm:max-w-xs">
         <Form
           className="contents"
           onSubmit={(e) => {
@@ -75,64 +74,66 @@ export function BulkMoveDialog({
               Select the group to move the selected bookmarks to.
             </DialogDescription>
           </DialogHeader>
-          <DialogPanel>
-            <Field>
-              <FieldLabel>Target Group</FieldLabel>
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  className="rounded-xl w-full"
-                  render={<Button variant="outline" className="gap-2 px-2 justify-between" />}
-                >
-                  {selectedGroup ? (
-                    <>
+          <Field>
+            <FieldLabel>Target Group</FieldLabel>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="rounded-xl w-full"
+                render={
+                  <Button variant="outline" className="w-full gap-2 px-2 justify-between" />
+                }
+              >
+                {selectedGroup ? (
+                  <>
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: selectedGroup.color }}
+                    />
+                    <span className="flex-1 text-left">{selectedGroup.name}</span>
+                  </>
+                ) : (
+                  <span className="text-muted-foreground flex-1 text-left">Select a group</span>
+                )}
+                <IconSelector className="h-4 w-4 text-muted-foreground shrink-0" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                className="min-w-[16rem] rounded-xl space-y-1"
+              >
+                {availableGroups.map((group) => (
+                  <DropdownMenuItem
+                    key={group.id}
+                    onClick={() => setTargetGroupId(group.id)}
+                    className={cn(
+                      "flex items-center justify-between rounded-lg",
+                      group.id === targetGroupId && "bg-accent",
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
                       <span
                         className="h-2.5 w-2.5 rounded-full"
-                        style={{ backgroundColor: selectedGroup.color }}
+                        style={{ backgroundColor: group.color }}
                       />
-                      <span className="flex-1 text-left">{selectedGroup.name}</span>
-                    </>
-                  ) : (
-                    <span className="text-muted-foreground flex-1 text-left">Select a group</span>
-                  )}
-                  <IconSelector className="h-4 w-4 text-muted-foreground shrink-0" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  className="w-full rounded-xl space-y-1"
-                >
-                  {availableGroups.map((group) => (
-                    <DropdownMenuItem
-                      key={group.id}
-                      onClick={() => setTargetGroupId(group.id)}
-                      className={cn(
-                        "flex items-center justify-between rounded-lg",
-                        group.id === targetGroupId && "bg-accent",
-                      )}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="h-2.5 w-2.5 rounded-full"
-                          style={{ backgroundColor: group.color }}
-                        />
-                        <span>{group.name}</span>
-                      </div>
-                      {group.id === targetGroupId && (
-                        <IconCheck className="h-4 w-4" />
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </Field>
-          </DialogPanel>
+                      <span>{group.name}</span>
+                    </div>
+                    {group.id === targetGroupId && (
+                      <IconCheck className="h-4 w-4" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </Field>
           <DialogFooter>
-            <DialogClose render={<Button variant="ghost" />}>Cancel</DialogClose>
+            <DialogClose render={<Button variant="ghost" />}>
+              Cancel
+            </DialogClose>
             <Button type="submit" disabled={!targetGroupId}>
               Move
             </Button>
           </DialogFooter>
         </Form>
-      </DialogPopup>
+      </DialogContent>
     </Dialog>
   );
 }

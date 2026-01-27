@@ -7,11 +7,10 @@ import { authClient } from "@/lib/auth-client";
 import {
   Dialog,
   DialogClose,
+  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogPanel,
-  DialogPopup,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -59,7 +58,7 @@ export function SettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogPopup className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-sm">
         <Form
           className="contents"
           onSubmit={(e) => {
@@ -73,46 +72,46 @@ export function SettingsDialog({
               Manage your account settings.
             </DialogDescription>
           </DialogHeader>
-          <DialogPanel>
-            <Field>
-              <FieldLabel>Name</FieldLabel>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                type="text"
-              />
-            </Field>
-            <Field>
-              <FieldLabel>Email</FieldLabel>
-              <Input
-                value={user.email}
-                disabled
-                type="email"
-                className="text-muted-foreground"
-              />
-            </Field>
-            <Field>
-              <FieldLabel>Chrome Extension</FieldLabel>
-              <a
-                href="/chrome"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <ChromeIcon />
-                <span>Get the Chrome Extension</span>
-              </a>
-            </Field>
-          </DialogPanel>
+          <Field>
+            <FieldLabel>Name</FieldLabel>
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              type="text"
+            />
+          </Field>
+          <Field>
+            <FieldLabel>Email</FieldLabel>
+            <Input
+              value={user.email}
+              disabled
+              type="email"
+              className="text-muted-foreground"
+            />
+          </Field>
+          <Field>
+            <FieldLabel>Chrome Extension</FieldLabel>
+            <a
+              href="/chrome"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ChromeIcon />
+              <span>Get the Chrome Extension</span>
+            </a>
+          </Field>
           <DialogFooter>
-            <DialogClose render={<Button variant="ghost" />}>Cancel</DialogClose>
+            <DialogClose render={<Button variant="ghost" />}>
+              Cancel
+            </DialogClose>
             <Button type="submit" disabled={isSaving || !name.trim()}>
               {isSaving ? "Saving..." : "Save"}
             </Button>
           </DialogFooter>
         </Form>
-      </DialogPopup>
+      </DialogContent>
     </Dialog>
   );
 }

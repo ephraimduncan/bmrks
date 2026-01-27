@@ -32,11 +32,10 @@ import { signOut } from "@/lib/auth-client";
 import {
   Dialog,
   DialogClose,
+  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogPanel,
-  DialogPopup,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
@@ -207,7 +206,7 @@ export function Header({
           </DropdownMenuContent>
         </DropdownMenu>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogPopup className="sm:max-w-sm">
+          <DialogContent className="sm:max-w-sm">
             <Form
               className="contents"
               onSubmit={(e) => {
@@ -221,18 +220,16 @@ export function Header({
                   Create a new group to organize your bookmarks.
                 </DialogDescription>
               </DialogHeader>
-              <DialogPanel>
-                <Field>
-                  <FieldLabel>Name</FieldLabel>
-                  <Input
-                    placeholder="Enter group name"
-                    value={newGroupName}
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                    autoFocus
-                  />
-                </Field>
-              </DialogPanel>
-              <DialogFooter variant="bare">
+              <Field>
+                <FieldLabel>Name</FieldLabel>
+                <Input
+                  placeholder="Enter group name"
+                  value={newGroupName}
+                  onChange={(e) => setNewGroupName(e.target.value)}
+                  autoFocus
+                />
+              </Field>
+              <DialogFooter>
                 <DialogClose render={<Button variant="ghost" />}>
                   Cancel
                 </DialogClose>
@@ -241,7 +238,7 @@ export function Header({
                 </Button>
               </DialogFooter>
             </Form>
-          </DialogPopup>
+          </DialogContent>
         </Dialog>
       </div>
 

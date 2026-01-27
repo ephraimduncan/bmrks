@@ -409,9 +409,9 @@ export function DashboardContent({
         old?.map((g) =>
           g.id === groupId
             ? {
-                ...g,
-                bookmarkCount: Math.max(0, (g.bookmarkCount ?? 0) - data.ids.length),
-              }
+              ...g,
+              bookmarkCount: Math.max(0, (g.bookmarkCount ?? 0) - data.ids.length),
+            }
             : g
         )
       );
