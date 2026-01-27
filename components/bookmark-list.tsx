@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -347,6 +347,10 @@ const BookmarkIcon = memo(function BookmarkIcon({
   isCopied?: boolean;
 }) {
   const [faviconError, setFaviconError] = useState(false);
+
+  useEffect(() => {
+    setFaviconError(false);
+  }, [bookmark.id, bookmark.favicon]);
 
   if (isCopied) {
     return (

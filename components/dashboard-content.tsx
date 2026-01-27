@@ -71,6 +71,11 @@ export function DashboardContent({
     [bookmarksQuery.data]
   );
 
+  useEffect(() => {
+    setSelectedIndex(-1);
+    setHoveredIndex(-1);
+  }, [bookmarks, currentGroupId]);
+
   const createBookmarkMutation = useMutation({
     mutationFn: (data: {
       title: string;
